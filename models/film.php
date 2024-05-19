@@ -13,7 +13,7 @@ class FilmModel
     {
         $db = Connect::connection();
 
-        $sql = $db->prepare("SELECT * FROM vw_film_list ORDER BY film_id DESC LIMIT ?;");   
+        $sql = $db->prepare("SELECT * FROM vw_film_list ORDER BY film_id DESC LIMIT $limit;");   
 
         if ($sql->execute()) {
             $data = $sql->get_result();

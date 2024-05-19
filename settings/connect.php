@@ -7,9 +7,10 @@ class Connect
         $hostname = "localhost";
         $username = "root";
         $password = "";
-        $database = "abd_burger";
+        $database = "sakila";
+        $port = 3308;
 
-        $connection = mysqli_connect($hostname, $username, $password, $database);
+        $connection = mysqli_connect($hostname, $username, $password, $database, $port);
         $connection->set_charset("utf8");
 
         if (mysqli_connect_errno()) {

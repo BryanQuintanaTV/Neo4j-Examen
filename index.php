@@ -7,5 +7,5 @@ if (empty($_SESSION["email"])) {
     exit();
 }
 
-require_once("controllers/home.php");
+require_once("views/film/film.php");
 exit();

@@ -1,5 +1,5 @@
 <head>
-    <link href="/src/css/film_style.css" rel="stylesheet">
+    <link href="../../src/css/film_style.css" rel="stylesheet">
 </head>
 
 <h1>Welcome <?= $_SESSION["email"]?>!</h1>
@@ -53,7 +53,7 @@
 </div>
 
 <div>
-    <form action="index.php" method="post">
+    <form action="../../index.php" method="post">
         <input type="submit" name="logout" value="Sign Out" />
     </form>
 </div>

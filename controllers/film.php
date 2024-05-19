@@ -10,9 +10,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['refresh'])) {
     exit();
 } else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])) {
     session_destroy();
-    header("http://" . $_SERVER["SERVER_NAME"] );
+    header("http://" . $_SERVER["SERVER_NAME"] . "/Neo4j-Examen");
     exit();
 }
 
 $data = $model->getLastFilms();
-require_once("views/films/films.php");
+require_once("views/film/film.php");
