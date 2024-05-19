@@ -14,3 +14,14 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORA
 GRANT USAGE ON *.* TO `sakila_query`@`%` IDENTIFIED BY PASSWORD '*BD874F60E5DC49673E3CB10AB040055B44FBDAD9';
 
 GRANT SELECT ON `sakila`.* TO `sakila_query`@`%`;
+
+---------------------------Usuarios Examen------------------------
+-- admin_examen  Password: Admin123 --
+GRANT USAGE ON *.* TO `admin_exam`@`%` IDENTIFIED BY PASSWORD '*B37ACB9927C1F3B520BBF976386EAB76A08F3367';
+
+GRANT SELECT, INSERT, UPDATE ON `sakila`.* TO `admin_exam`@`%`;
+
+-- guess_examen --
+GRANT USAGE ON *.* TO `guess_examen`@`%` IDENTIFIED BY PASSWORD '*E27FCC422509DA3131FEA64587995EEEEA0C221F';
+
+GRANT SELECT ON `sakila`.* TO `guess_examen`@`%`;
