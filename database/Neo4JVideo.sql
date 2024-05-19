@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3308
--- Generation Time: May 07, 2024 at 09:45 AM
+-- Generation Time: May 19, 2024 at 07:13 AM
 -- Server version: 10.4.32-MariaDB-log
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `sakila`
 --
+CREATE DATABASE IF NOT EXISTS `sakila` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `sakila`;
 
 DELIMITER $$
 --
@@ -132,12 +134,14 @@ DELIMITER ;
 -- Table structure for table `actor`
 --
 
-CREATE TABLE `actor` (
-  `actor_id` smallint(5) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `actor` (
+  `actor_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   `first_name` varchar(45) NOT NULL,
   `last_name` varchar(45) NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`actor_id`),
+  KEY `idx_actor_last_name` (`last_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=202 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `actor`
@@ -376,16 +380,18 @@ DELIMITER ;
 -- Table structure for table `address`
 --
 
-CREATE TABLE `address` (
-  `address_id` smallint(5) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `address` (
+  `address_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   `address` varchar(50) NOT NULL,
   `address2` varchar(50) DEFAULT NULL,
   `district` varchar(20) NOT NULL,
   `city_id` smallint(5) UNSIGNED NOT NULL,
   `postal_code` varchar(10) DEFAULT NULL,
   `phone` varchar(20) NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`address_id`),
+  KEY `idx_fk_city_id` (`city_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=606 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `address`
@@ -1003,11 +1009,12 @@ INSERT INTO `address` (`address_id`, `address`, `address2`, `district`, `city_id
 -- Table structure for table `category`
 --
 
-CREATE TABLE `category` (
-  `category_id` tinyint(3) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `category` (
+  `category_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(25) NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`category_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `category`
@@ -1037,12 +1044,14 @@ INSERT INTO `category` (`category_id`, `name`, `last_update`) VALUES
 -- Table structure for table `city`
 --
 
-CREATE TABLE `city` (
-  `city_id` smallint(5) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `city` (
+  `city_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   `city` varchar(50) NOT NULL,
   `country_id` smallint(5) UNSIGNED NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`city_id`),
+  KEY `idx_fk_country_id` (`country_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=601 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `city`
@@ -1656,11 +1665,12 @@ INSERT INTO `city` (`city_id`, `city`, `country_id`, `last_update`) VALUES
 -- Table structure for table `country`
 --
 
-CREATE TABLE `country` (
-  `country_id` smallint(5) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `country` (
+  `country_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   `country` varchar(50) NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`country_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `country`
@@ -1783,8 +1793,8 @@ INSERT INTO `country` (`country_id`, `country`, `last_update`) VALUES
 -- Table structure for table `customer`
 --
 
-CREATE TABLE `customer` (
-  `customer_id` smallint(5) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `customer` (
+  `customer_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   `store_id` tinyint(3) UNSIGNED NOT NULL,
   `first_name` varchar(45) NOT NULL,
   `last_name` varchar(45) NOT NULL,
@@ -1792,8 +1802,12 @@ CREATE TABLE `customer` (
   `address_id` smallint(5) UNSIGNED NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `create_date` datetime NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`customer_id`),
+  KEY `idx_fk_store_id` (`store_id`),
+  KEY `idx_fk_address_id` (`address_id`),
+  KEY `idx_last_name` (`last_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=601 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customer`
@@ -2469,8 +2483,8 @@ DELIMITER ;
 -- Table structure for table `film`
 --
 
-CREATE TABLE `film` (
-  `film_id` smallint(5) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `film` (
+  `film_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(128) NOT NULL,
   `description` text DEFAULT NULL,
   `release_year` year(4) DEFAULT NULL,
@@ -2482,8 +2496,12 @@ CREATE TABLE `film` (
   `replacement_cost` decimal(5,2) NOT NULL DEFAULT 19.99,
   `rating` enum('G','PG','PG-13','R','NC-17') DEFAULT 'G',
   `special_features` set('Trailers','Commentaries','Deleted Scenes','Behind the Scenes') DEFAULT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`film_id`),
+  KEY `idx_title` (`title`),
+  KEY `idx_fk_language_id` (`language_id`),
+  KEY `idx_fk_original_language_id` (`original_language_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1015 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `film`
@@ -3539,10 +3557,12 @@ DELIMITER ;
 -- Table structure for table `film_actor`
 --
 
-CREATE TABLE `film_actor` (
+CREATE TABLE IF NOT EXISTS `film_actor` (
   `actor_id` smallint(5) UNSIGNED NOT NULL,
   `film_id` smallint(5) UNSIGNED NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`actor_id`,`film_id`),
+  KEY `idx_fk_film_id` (`film_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -9022,10 +9042,12 @@ INSERT INTO `film_actor` (`actor_id`, `film_id`, `last_update`) VALUES
 -- Table structure for table `film_category`
 --
 
-CREATE TABLE `film_category` (
+CREATE TABLE IF NOT EXISTS `film_category` (
   `film_id` smallint(5) UNSIGNED NOT NULL,
   `category_id` tinyint(3) UNSIGNED NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`film_id`,`category_id`),
+  KEY `fk_film_category_category` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -10040,10 +10062,11 @@ INSERT INTO `film_category` (`film_id`, `category_id`, `last_update`) VALUES
 -- Table structure for table `film_text`
 --
 
-CREATE TABLE `film_text` (
+CREATE TABLE IF NOT EXISTS `film_text` (
   `film_id` smallint(5) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL
+  `description` text DEFAULT NULL,
+  PRIMARY KEY (`film_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -11060,12 +11083,15 @@ INSERT INTO `film_text` (`film_id`, `title`, `description`) VALUES
 -- Table structure for table `inventory`
 --
 
-CREATE TABLE `inventory` (
-  `inventory_id` mediumint(8) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `inventory` (
+  `inventory_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
   `film_id` smallint(5) UNSIGNED NOT NULL,
   `store_id` tinyint(3) UNSIGNED NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`inventory_id`),
+  KEY `idx_fk_film_id` (`film_id`),
+  KEY `idx_store_id_film_id` (`store_id`,`film_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4584 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `inventory`
@@ -15730,11 +15756,12 @@ DELIMITER ;
 -- Table structure for table `language`
 --
 
-CREATE TABLE `language` (
-  `language_id` tinyint(3) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `language` (
+  `language_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` char(20) NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`language_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `language`
@@ -15754,15 +15781,16 @@ INSERT INTO `language` (`language_id`, `name`, `last_update`) VALUES
 -- Table structure for table `log_actor`
 --
 
-CREATE TABLE `log_actor` (
-  `idlog_actor` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `log_actor` (
+  `idlog_actor` int(11) NOT NULL AUTO_INCREMENT,
   `actor_id` smallint(5) DEFAULT NULL,
   `first_name` varchar(45) DEFAULT NULL,
   `last_name` varchar(45) DEFAULT NULL,
   `db_user` varchar(25) DEFAULT NULL,
   `date` date DEFAULT NULL,
-  `operation` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `operation` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`idlog_actor`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `log_actor`
@@ -15779,8 +15807,8 @@ INSERT INTO `log_actor` (`idlog_actor`, `actor_id`, `first_name`, `last_name`, `
 -- Table structure for table `log_customer`
 --
 
-CREATE TABLE `log_customer` (
-  `idlog_customer` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `log_customer` (
+  `idlog_customer` int(11) NOT NULL AUTO_INCREMENT,
   `customer_id` smallint(5) DEFAULT NULL,
   `store` varchar(50) DEFAULT NULL,
   `first_name` varchar(45) DEFAULT NULL,
@@ -15790,8 +15818,9 @@ CREATE TABLE `log_customer` (
   `active` tinyint(1) DEFAULT NULL,
   `db_user` varchar(25) DEFAULT NULL,
   `date` date DEFAULT NULL,
-  `operation` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `operation` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`idlog_customer`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `log_customer`
@@ -15808,8 +15837,8 @@ INSERT INTO `log_customer` (`idlog_customer`, `customer_id`, `store`, `first_nam
 -- Table structure for table `log_film`
 --
 
-CREATE TABLE `log_film` (
-  `idlog_film` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `log_film` (
+  `idlog_film` int(11) NOT NULL AUTO_INCREMENT,
   `film_id` smallint(3) NOT NULL,
   `title` varchar(128) NOT NULL,
   `description` text DEFAULT NULL,
@@ -15824,7 +15853,8 @@ CREATE TABLE `log_film` (
   `special_features` set('Trailers','Commentaries','Deleted Scenes','Behind the Scenes') DEFAULT NULL,
   `db_user` varchar(30) DEFAULT NULL,
   `operation` varchar(10) DEFAULT NULL,
-  `date` date DEFAULT NULL
+  `date` date DEFAULT NULL,
+  PRIMARY KEY (`idlog_film`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -15833,15 +15863,16 @@ CREATE TABLE `log_film` (
 -- Table structure for table `log_inventory`
 --
 
-CREATE TABLE `log_inventory` (
-  `idlog_inventory` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `log_inventory` (
+  `idlog_inventory` int(11) NOT NULL AUTO_INCREMENT,
   `film_title` varchar(128) DEFAULT NULL,
   `store_address` varchar(50) DEFAULT NULL,
   `db_user` varchar(25) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `operation` varchar(10) DEFAULT NULL,
-  `id_inventory` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id_inventory` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idlog_inventory`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `log_inventory`
@@ -15858,15 +15889,19 @@ INSERT INTO `log_inventory` (`idlog_inventory`, `film_title`, `store_address`, `
 -- Table structure for table `payment`
 --
 
-CREATE TABLE `payment` (
-  `payment_id` smallint(5) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `payment` (
+  `payment_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   `customer_id` smallint(5) UNSIGNED NOT NULL,
   `staff_id` tinyint(3) UNSIGNED NOT NULL,
   `rental_id` int(11) DEFAULT NULL,
   `amount` decimal(5,2) NOT NULL,
   `payment_date` datetime NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`payment_id`),
+  KEY `idx_fk_staff_id` (`staff_id`),
+  KEY `idx_fk_customer_id` (`customer_id`),
+  KEY `fk_payment_rental` (`rental_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16050 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payment`
@@ -31955,15 +31990,20 @@ DELIMITER ;
 -- Table structure for table `rental`
 --
 
-CREATE TABLE `rental` (
-  `rental_id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `rental` (
+  `rental_id` int(11) NOT NULL AUTO_INCREMENT,
   `rental_date` datetime NOT NULL,
   `inventory_id` mediumint(8) UNSIGNED NOT NULL,
   `customer_id` smallint(5) UNSIGNED NOT NULL,
   `return_date` datetime DEFAULT NULL,
   `staff_id` tinyint(3) UNSIGNED NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`rental_id`),
+  UNIQUE KEY `rental_date` (`rental_date`,`inventory_id`,`customer_id`),
+  KEY `idx_fk_inventory_id` (`inventory_id`),
+  KEY `idx_fk_customer_id` (`customer_id`),
+  KEY `idx_fk_staff_id` (`staff_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16050 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `rental`
@@ -48057,8 +48097,8 @@ DELIMITER ;
 -- Table structure for table `staff`
 --
 
-CREATE TABLE `staff` (
-  `staff_id` tinyint(3) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `staff` (
+  `staff_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `first_name` varchar(45) NOT NULL,
   `last_name` varchar(45) NOT NULL,
   `address_id` smallint(5) UNSIGNED NOT NULL,
@@ -48068,8 +48108,11 @@ CREATE TABLE `staff` (
   `active` tinyint(1) NOT NULL DEFAULT 1,
   `username` varchar(16) NOT NULL,
   `password` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`staff_id`),
+  KEY `idx_fk_store_id` (`store_id`),
+  KEY `idx_fk_address_id` (`address_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `staff`
@@ -48086,12 +48129,15 @@ INSERT INTO `staff` (`staff_id`, `first_name`, `last_name`, `address_id`, `pictu
 -- Table structure for table `store`
 --
 
-CREATE TABLE `store` (
-  `store_id` tinyint(3) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `store` (
+  `store_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `manager_staff_id` tinyint(3) UNSIGNED NOT NULL,
   `address_id` smallint(5) UNSIGNED NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`store_id`),
+  UNIQUE KEY `idx_unique_manager` (`manager_staff_id`),
+  KEY `idx_fk_address_id` (`address_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `store`
@@ -48107,7 +48153,7 @@ INSERT INTO `store` (`store_id`, `manager_staff_id`, `address_id`, `last_update`
 -- Stand-in structure for view `vw_film_list`
 -- (See below for the actual view)
 --
-CREATE TABLE `vw_film_list` (
+CREATE TABLE IF NOT EXISTS `vw_film_list` (
 `film_id` smallint(5) unsigned
 ,`title` varchar(128)
 ,`description` text
@@ -48129,7 +48175,7 @@ CREATE TABLE `vw_film_list` (
 -- Stand-in structure for view `vw_pending_rental`
 -- (See below for the actual view)
 --
-CREATE TABLE `vw_pending_rental` (
+CREATE TABLE IF NOT EXISTS `vw_pending_rental` (
 `rental_id` int(11)
 ,`Fecha de renta` datetime
 ,`Fecha de devolución` datetime
@@ -48164,255 +48210,9 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 
 --
--- Indexes for table `actor`
---
-ALTER TABLE `actor`
-  ADD PRIMARY KEY (`actor_id`),
-  ADD KEY `idx_actor_last_name` (`last_name`);
-
---
--- Indexes for table `address`
---
-ALTER TABLE `address`
-  ADD PRIMARY KEY (`address_id`),
-  ADD KEY `idx_fk_city_id` (`city_id`);
-
---
--- Indexes for table `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`category_id`);
-
---
--- Indexes for table `city`
---
-ALTER TABLE `city`
-  ADD PRIMARY KEY (`city_id`),
-  ADD KEY `idx_fk_country_id` (`country_id`);
-
---
--- Indexes for table `country`
---
-ALTER TABLE `country`
-  ADD PRIMARY KEY (`country_id`);
-
---
--- Indexes for table `customer`
---
-ALTER TABLE `customer`
-  ADD PRIMARY KEY (`customer_id`),
-  ADD KEY `idx_fk_store_id` (`store_id`),
-  ADD KEY `idx_fk_address_id` (`address_id`),
-  ADD KEY `idx_last_name` (`last_name`);
-
---
--- Indexes for table `film`
---
-ALTER TABLE `film`
-  ADD PRIMARY KEY (`film_id`),
-  ADD KEY `idx_title` (`title`),
-  ADD KEY `idx_fk_language_id` (`language_id`),
-  ADD KEY `idx_fk_original_language_id` (`original_language_id`);
-
---
--- Indexes for table `film_actor`
---
-ALTER TABLE `film_actor`
-  ADD PRIMARY KEY (`actor_id`,`film_id`),
-  ADD KEY `idx_fk_film_id` (`film_id`);
-
---
--- Indexes for table `film_category`
---
-ALTER TABLE `film_category`
-  ADD PRIMARY KEY (`film_id`,`category_id`),
-  ADD KEY `fk_film_category_category` (`category_id`);
-
---
 -- Indexes for table `film_text`
 --
-ALTER TABLE `film_text`
-  ADD PRIMARY KEY (`film_id`);
 ALTER TABLE `film_text` ADD FULLTEXT KEY `idx_title_description` (`title`,`description`);
-
---
--- Indexes for table `inventory`
---
-ALTER TABLE `inventory`
-  ADD PRIMARY KEY (`inventory_id`),
-  ADD KEY `idx_fk_film_id` (`film_id`),
-  ADD KEY `idx_store_id_film_id` (`store_id`,`film_id`);
-
---
--- Indexes for table `language`
---
-ALTER TABLE `language`
-  ADD PRIMARY KEY (`language_id`);
-
---
--- Indexes for table `log_actor`
---
-ALTER TABLE `log_actor`
-  ADD PRIMARY KEY (`idlog_actor`);
-
---
--- Indexes for table `log_customer`
---
-ALTER TABLE `log_customer`
-  ADD PRIMARY KEY (`idlog_customer`);
-
---
--- Indexes for table `log_film`
---
-ALTER TABLE `log_film`
-  ADD PRIMARY KEY (`idlog_film`);
-
---
--- Indexes for table `log_inventory`
---
-ALTER TABLE `log_inventory`
-  ADD PRIMARY KEY (`idlog_inventory`);
-
---
--- Indexes for table `payment`
---
-ALTER TABLE `payment`
-  ADD PRIMARY KEY (`payment_id`),
-  ADD KEY `idx_fk_staff_id` (`staff_id`),
-  ADD KEY `idx_fk_customer_id` (`customer_id`),
-  ADD KEY `fk_payment_rental` (`rental_id`);
-
---
--- Indexes for table `rental`
---
-ALTER TABLE `rental`
-  ADD PRIMARY KEY (`rental_id`),
-  ADD UNIQUE KEY `rental_date` (`rental_date`,`inventory_id`,`customer_id`),
-  ADD KEY `idx_fk_inventory_id` (`inventory_id`),
-  ADD KEY `idx_fk_customer_id` (`customer_id`),
-  ADD KEY `idx_fk_staff_id` (`staff_id`);
-
---
--- Indexes for table `staff`
---
-ALTER TABLE `staff`
-  ADD PRIMARY KEY (`staff_id`),
-  ADD KEY `idx_fk_store_id` (`store_id`),
-  ADD KEY `idx_fk_address_id` (`address_id`);
-
---
--- Indexes for table `store`
---
-ALTER TABLE `store`
-  ADD PRIMARY KEY (`store_id`),
-  ADD UNIQUE KEY `idx_unique_manager` (`manager_staff_id`),
-  ADD KEY `idx_fk_address_id` (`address_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `actor`
---
-ALTER TABLE `actor`
-  MODIFY `actor_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=202;
-
---
--- AUTO_INCREMENT for table `address`
---
-ALTER TABLE `address`
-  MODIFY `address_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=606;
-
---
--- AUTO_INCREMENT for table `category`
---
-ALTER TABLE `category`
-  MODIFY `category_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
--- AUTO_INCREMENT for table `city`
---
-ALTER TABLE `city`
-  MODIFY `city_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=601;
-
---
--- AUTO_INCREMENT for table `country`
---
-ALTER TABLE `country`
-  MODIFY `country_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
-
---
--- AUTO_INCREMENT for table `customer`
---
-ALTER TABLE `customer`
-  MODIFY `customer_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=601;
-
---
--- AUTO_INCREMENT for table `film`
---
-ALTER TABLE `film`
-  MODIFY `film_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1015;
-
---
--- AUTO_INCREMENT for table `inventory`
---
-ALTER TABLE `inventory`
-  MODIFY `inventory_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4584;
-
---
--- AUTO_INCREMENT for table `language`
---
-ALTER TABLE `language`
-  MODIFY `language_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `log_actor`
---
-ALTER TABLE `log_actor`
-  MODIFY `idlog_actor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `log_customer`
---
-ALTER TABLE `log_customer`
-  MODIFY `idlog_customer` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `log_film`
---
-ALTER TABLE `log_film`
-  MODIFY `idlog_film` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `log_inventory`
---
-ALTER TABLE `log_inventory`
-  MODIFY `idlog_inventory` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `payment`
---
-ALTER TABLE `payment`
-  MODIFY `payment_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16050;
-
---
--- AUTO_INCREMENT for table `rental`
---
-ALTER TABLE `rental`
-  MODIFY `rental_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16050;
-
---
--- AUTO_INCREMENT for table `staff`
---
-ALTER TABLE `staff`
-  MODIFY `staff_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `store`
---
-ALTER TABLE `store`
-  MODIFY `store_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
