@@ -21,6 +21,5 @@
 > <b> Lenguajes de programación </b>
 > * PHP
 > * JavaScript
-> * HTML
 > * CSS
 
