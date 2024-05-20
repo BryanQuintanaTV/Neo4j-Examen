@@ -23,3 +23,10 @@
 > * JavaScript
 > * CSS
 
+> Usuario <b>ADMIN</b> <br>
+> user = admin@neo4j.com <br> 
+> Password = adminPassword123
+
+> Usuario <b>GUESS</b> <br>
+> user = guess@neo4j.com <br>
+> Password = guessPassword123
