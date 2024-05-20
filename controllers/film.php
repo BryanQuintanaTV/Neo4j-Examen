@@ -6,7 +6,7 @@ $message = "";
 $model = new FilmModel();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['refresh'])) {
-    header("Location: /");
+    header("Location: " . $_SERVER["REQUEST_URI"]);
     exit();
 } else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])) {
     session_destroy();
