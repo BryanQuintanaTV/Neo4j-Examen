@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3308
--- Generation Time: May 20, 2024 at 07:05 AM
+-- Generation Time: May 20, 2024 at 08:28 AM
 -- Server version: 10.4.32-MariaDB-log
 -- PHP Version: 8.2.12
 
@@ -95,6 +95,98 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insert_film` (IN `title` NVARCHA
         WHERE c.category_id IN (SELECT category_id FROM film_category WHERE film_id = film_id);
         
         COMMIT;
+    END IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_manage_film` (IN `id_pelicula` INT, IN `titulo` NVARCHAR(255), IN `descripcion` TEXT, IN `anio_estreno` INT, IN `id_idioma` INT, IN `id_idioma_original` INT, IN `duracion_alquiler` INT, IN `tarifa_alquiler` DECIMAL(5,2), IN `duracion` INT, IN `costo_reemplazo` DECIMAL(5,2), IN `clasificacion` NCHAR(10), IN `caracteristicas_especiales` NVARCHAR(255), IN `ultima_actualizacion` TIMESTAMP)   BEGIN
+    DECLARE id_pelicula_existente INT;
+    DECLARE conteo_peliculas INT;
+
+    IF id_pelicula > 0 THEN
+        -- Actualización de la película existente
+        UPDATE film 
+        SET 
+            title = titulo,
+            description = descripcion,
+            release_year = anio_estreno,
+            language_id = id_idioma,
+            original_language_id = id_idioma_original,
+            rental_duration = duracion_alquiler,
+            rental_rate = tarifa_alquiler,
+            length = duracion,
+            replacement_cost = costo_reemplazo,
+            rating = clasificacion,
+            special_features = caracteristicas_especiales,
+            last_update = ultima_actualizacion
+        WHERE film_id = id_pelicula;
+    ELSE
+        -- Inserción de una nueva película
+        SELECT COUNT(*) INTO conteo_peliculas
+        FROM film
+        WHERE 
+            title = titulo AND
+            description = descripcion AND
+            release_year = anio_estreno AND
+            language_id = id_idioma AND
+            original_language_id = id_idioma_original AND
+            rental_duration = duracion_alquiler AND
+            rental_rate = tarifa_alquiler AND
+            length = duracion AND
+            replacement_cost = costo_reemplazo AND
+            rating = clasificacion AND
+            special_features = caracteristicas_especiales AND
+            last_update = ultima_actualizacion;
+        
+        IF conteo_peliculas > 0 THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La película ya existe en la base de datos.';
+        ELSE
+            -- Obtener el nuevo ID de la película
+            SET id_pelicula_existente = (SELECT COALESCE(MAX(film_id), 0) + 1 FROM film);
+
+            -- Insertar la película en la tabla film
+            INSERT INTO film (
+                film_id,
+                title,
+                description,
+                release_year,
+                language_id,
+                original_language_id,
+                rental_duration,
+                rental_rate,
+                length,
+                replacement_cost,
+                rating,
+                special_features,
+                last_update
+            ) VALUES (
+                id_pelicula_existente,
+                titulo,
+                descripcion,
+                anio_estreno,
+                id_idioma,
+                id_idioma_original,
+                duracion_alquiler,
+                tarifa_alquiler,
+                duracion,
+                costo_reemplazo,
+                clasificacion,
+                caracteristicas_especiales,
+                ultima_actualizacion
+            );
+
+            -- Insertar en la tabla film_actor
+            INSERT INTO film_actor (actor_id, film_id, last_update)
+            SELECT a.actor_id, id_pelicula_existente, ultima_actualizacion
+            FROM actor a
+            WHERE a.actor_id IN (SELECT actor_id FROM film_actor WHERE film_id = id_pelicula_existente);
+
+            -- Insertar en la tabla film_category
+            INSERT INTO film_category (category_id, film_id, last_update)
+            SELECT c.category_id, id_pelicula_existente, ultima_actualizacion
+            FROM category c
+            WHERE c.category_id IN (SELECT category_id FROM film_category WHERE film_id = id_pelicula_existente);
+            
+        END IF;
     END IF;
 END$$
 
@@ -2548,7 +2640,7 @@ CREATE TABLE IF NOT EXISTS `film` (
 --
 
 INSERT INTO `film` (`film_id`, `title`, `description`, `release_year`, `language_id`, `original_language_id`, `rental_duration`, `rental_rate`, `length`, `replacement_cost`, `rating`, `special_features`, `last_update`) VALUES
-(1, 'ACADEMY DINOSAUR', 'A Epic Drama of a Feminist And a Mad Scientist who must Battle a Teacher in The Canadian Rockies', '2006', 1, NULL, 6, 0.99, 86, 20.99, 'PG', 'Deleted Scenes,Behind the Scenes', '2006-02-15 05:03:42'),
+(1, 'ACADEMY ', 'A Epic Drama of a Feminist And a Mad Scientist who must Battle a Teacher in The Canadian Rockies', '2006', 1, 2, 6, 0.99, 86, 20.99, 'PG', 'Deleted Scenes', '2006-02-15 12:03:42'),
 (2, 'ACE GOLDFINGER', 'A Astounding Epistle of a Database Administrator And a Explorer who must Find a Car in Ancient China', '2006', 1, NULL, 3, 4.99, 48, 12.99, 'G', 'Trailers,Deleted Scenes', '2006-02-15 05:03:42'),
 (3, 'ADAPTATION HOLES', 'A Astounding Reflection of a Lumberjack And a Car who must Sink a Lumberjack in A Baloon Factory', '2006', 1, NULL, 7, 2.99, 50, 18.99, 'NC-17', 'Trailers,Deleted Scenes', '2006-02-15 05:03:42'),
 (4, 'AFFAIR PREJUDICE', 'A Fanciful Documentary of a Frisbee And a Lumberjack who must Chase a Monkey in A Shark Tank', '2006', 1, NULL, 5, 2.99, 117, 26.99, 'G', 'Commentaries,Behind the Scenes', '2006-02-15 05:03:42'),
@@ -3552,44 +3644,8 @@ INSERT INTO `film` (`film_id`, `title`, `description`, `release_year`, `language
 (998, 'ZHIVAGO CORE', 'A Fateful Yarn of a Composer And a Man who must Face a Boy in The Canadian Rockies', '2006', 1, NULL, 6, 0.99, 105, 10.99, 'NC-17', 'Deleted Scenes', '2006-02-15 05:03:42'),
 (999, 'ZOOLANDER FICTION', 'A Fateful Reflection of a Waitress And a Boat who must Discover a Sumo Wrestler in Ancient China', '2006', 1, NULL, 5, 2.99, 101, 28.99, 'R', 'Trailers,Deleted Scenes', '2006-02-15 05:03:42'),
 (1000, 'ZORRO ARK', 'A Intrepid Panorama of a Mad Scientist And a Boy who must Redeem a Boy in A Monastery', '2006', 1, NULL, 3, 4.99, 50, 18.99, 'NC-17', 'Trailers,Commentaries,Behind the Scenes', '2006-02-15 05:03:42'),
-(1001, 'TEST', 'TEST DESC', '2006', 1, NULL, 3, 4.99, 50, 19.99, 'R', 'Trailers', '2024-05-07 06:45:55');
-
---
--- Triggers `film`
---
-DELIMITER $$
-CREATE TRIGGER `film_AFTER_DELETE` AFTER DELETE ON `film` FOR EACH ROW BEGIN
-	INSERT INTO
-		log_film (film_id, title, description, release_year, language_id, original_language_id,rental_duration, rental_rate,
-			  length, replacement_cost, rating,special_features, db_user, date, operation)
-	VALUES
-			(old.film_id, old.title, old.description, old.release_year, old.language_id, old.original_language_id, old.rental_duration,
-            old.rental_rate, old.length, old.replacement_cost, old.rating, old.special_features, user(), now(), 'DELETE');
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `film_AFTER_INSERT` AFTER INSERT ON `film` FOR EACH ROW BEGIN
-	INSERT INTO
-		log_film (film_id, title, description, release_year, language_id, original_language_id,rental_duration, rental_rate,
-			  length, replacement_cost, rating, special_features, db_user, date, operation)
-	VALUES
-			(new.film_id, new.title, new.description, new.release_year, new.language_id, new.original_language_id, new.rental_duration,
-            new.rental_rate, new.length, new.replacement_cost, new.rating, new.special_features, user(), now(), 'INSERT');
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `film_AFTER_UPDATE` AFTER UPDATE ON `film` FOR EACH ROW BEGIN
-	INSERT INTO
-		log_film (film_id, title, description, release_year, language_id, original_language_id,rental_duration, rental_rate,
-			  length, replacement_cost, rating,special_features, db_user, date, operation)
-	VALUES
-			(new.film_id, new.title, new.description, new.release_year, new.language_id, new.original_language_id, new.rental_duration,
-            new.rental_rate, new.length, new.replacement_cost, new.rating, new.special_features, user(), now(), 'UPDATE');
-END
-$$
-DELIMITER ;
+(1001, 'TEST', 'TEST DESC', '2006', 1, NULL, 3, 4.99, 50, 19.99, 'R', 'Trailers', '2024-05-07 06:45:55'),
+(1002, 'Movie TEST ', 'A Movie desc TEST', '2006', 1, 2, 6, 0.99, 86, 20.99, 'PG', 'Deleted Scenes', '2006-02-15 12:03:42');
 
 -- --------------------------------------------------------
 
