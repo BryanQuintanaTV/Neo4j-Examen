@@ -21,7 +21,7 @@
               <li>
               <form method="get" action="index.php">
                 <input type="hidden" name="page" value="films">
-                <button type="submit">Ver Actores</button>
+                <button type="submit">Films</button>
               </form>
               </li>
               <li>page</li>
