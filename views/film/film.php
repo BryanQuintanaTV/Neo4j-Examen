@@ -49,7 +49,7 @@
                                 <td>$<?= $film['replacement_cost']; ?></td>
                                 <td><?= $film['rating']; ?></td>
                                 <td><?= $film['special_features']; ?></td>
-                                <td><?= $film['actor']; ?></td>
+                                <td><?= $film['actores']; ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else : ?>
