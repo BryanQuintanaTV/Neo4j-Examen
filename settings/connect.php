@@ -8,7 +8,7 @@ class Connect
         $username = "root";
         $password = "";
         $database = "sakila";
-        $port = 3308;
+        $port = 3306;
 
         $connection = mysqli_connect($hostname, $username, $password, $database, $port);
         $connection->set_charset("utf8");
