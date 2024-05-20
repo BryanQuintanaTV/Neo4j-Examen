@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['refresh'])) {
     exit();
 } else if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])) {
     session_destroy();
-    header("http://" . $_SERVER["SERVER_NAME"] . "/Neo4j-Examen");
+    header("Location: http://" . $_SERVER["SERVER_NAME"] . "/Neo4j-Examen");
     exit();
 }
 

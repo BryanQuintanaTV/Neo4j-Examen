@@ -53,7 +53,7 @@
 </div>
 
 <div>
-    <form action="../../index.php" method="post">
+    <form action="index.php" method="post">
         <input type="submit" name="logout" value="Sign Out" />
     </form>
 </div>

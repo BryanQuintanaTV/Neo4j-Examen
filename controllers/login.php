@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["email"] = $data["email"];
             $_SESSION["user_type"] = $data["user_type"];
 
-            header("http://" . $_SERVER["SERVER_NAME"] . "/Neo4j-Examen");
+            header("Location: http://" . $_SERVER["SERVER_NAME"] . "/Neo4j-Examen");
             exit();
         } else {
             $data["msn"] = "Usuario o contraseña incorrecta";
